@@ -128,6 +128,7 @@ export default function Header({ overlay = false }) {
                   <NavLink
                     to={item.to}
                     end={item.to === '/'}
+                    onClick={() => setMega(null)}
                     aria-haspopup={item.mega ? 'true' : undefined}
                     aria-expanded={item.mega ? mega === item.mega : undefined}
                     className={({ isActive }) =>
@@ -156,7 +157,7 @@ export default function Header({ overlay = false }) {
               onMouseEnter={() => openMega(mega)}
               onMouseLeave={scheduleClose}
             >
-              <MegaPanel menu={megaMenus[mega]} />
+              <MegaPanel menu={megaMenus[mega]} onClose={() => setMega(null)} />
             </motion.div>
           )}
         </AnimatePresence>
@@ -180,7 +181,7 @@ function Badge({ n, solid }) {
   );
 }
 
-function MegaPanel({ menu }) {
+function MegaPanel({ menu, onClose }) {
   return (
     <div className="container-luxe grid grid-cols-[1fr_1fr_1fr_minmax(260px,320px)] gap-10 py-10 text-ink">
       {menu.columns.map((col, i) => (
@@ -189,7 +190,7 @@ function MegaPanel({ menu }) {
           <ul className="space-y-3">
             {col.links.map((l) => (
               <li key={l.to + l.label}>
-                <Link to={l.to} className="text-[14px] tracking-wide text-charcoal transition-colors hover:text-gold-dark">
+                <Link to={l.to} onClick={onClose} className="text-[14px] tracking-wide text-charcoal transition-colors hover:text-gold-dark">
                   {l.label}
                 </Link>
               </li>
@@ -198,7 +199,7 @@ function MegaPanel({ menu }) {
         </div>
       ))}
       {menu.columns.length < 3 && <div />}
-      <Link to={menu.feature.to} className="group relative block aspect-[4/5] overflow-hidden">
+      <Link to={menu.feature.to} onClick={onClose} className="group relative block aspect-[4/5] overflow-hidden">
         <Img src={menu.feature.image} alt={menu.feature.title} width={500} sizes="320px" className="transition-transform duration-[1400ms] group-hover:scale-105" />
         <span className="absolute inset-0 bg-gradient-to-t from-ink/60 via-transparent" />
         <span className="absolute inset-x-0 bottom-6 text-center text-ivory">
@@ -268,7 +269,7 @@ function MobileMenu({ open, onClose }) {
                               className="overflow-hidden pb-4 pl-3"
                             >
                               <li>
-                                <Link to={item.to} className="block py-2 text-[14px] text-gold-dark">
+                                <Link to={item.to} onClick={onClose} className="block py-2 text-[14px] text-gold-dark">
                                   View all {item.label}
                                 </Link>
                               </li>
@@ -277,7 +278,7 @@ function MobileMenu({ open, onClose }) {
                                 .filter((l) => l.to !== item.to)
                                 .map((l) => (
                                   <li key={l.to + l.label}>
-                                    <Link to={l.to} className="block py-2 text-[14px] text-charcoal">
+                                    <Link to={l.to} onClick={onClose} className="block py-2 text-[14px] text-charcoal">
                                       {l.label}
                                     </Link>
                                   </li>
@@ -287,7 +288,7 @@ function MobileMenu({ open, onClose }) {
                         </AnimatePresence>
                       </>
                     ) : (
-                      <Link to={item.to} className="block py-4 text-[13px] uppercase tracking-[0.2em]">
+                      <Link to={item.to} onClick={onClose} className="block py-4 text-[13px] uppercase tracking-[0.2em]">
                         {item.label}
                       </Link>
                     )}
@@ -295,19 +296,19 @@ function MobileMenu({ open, onClose }) {
                 ))}
               </ul>
               <div className="mt-6 flex flex-col gap-3 text-[13px] text-charcoal">
-                <Link to="/account" className="flex items-center gap-3 py-1">
+                <Link to="/account" onClick={onClose} className="flex items-center gap-3 py-1">
                   <User size={17} strokeWidth={1.25} /> My Account
                 </Link>
-                <Link to="/wishlist" className="flex items-center gap-3 py-1">
+                <Link to="/wishlist" onClick={onClose} className="flex items-center gap-3 py-1">
                   <Heart size={17} strokeWidth={1.25} /> Wishlist
                 </Link>
-                <Link to="/bag" className="flex items-center gap-3 py-1">
+                <Link to="/bag" onClick={onClose} className="flex items-center gap-3 py-1">
                   <ShoppingBag size={17} strokeWidth={1.25} /> Shopping Bag
                 </Link>
               </div>
             </nav>
             <div className="border-t border-line p-5">
-              <Link to="/appointment" className="btn-dark w-full">
+              <Link to="/appointment" onClick={onClose} className="btn-dark w-full">
                 Book an Appointment
               </Link>
             </div>
@@ -343,7 +344,7 @@ function SearchOverlay({ open, onClose }) {
     if (term.length < 2) return [];
     return products
       .filter((p) =>
-        [p.name, p.category, p.gender, ...(p.colours || []).map((c) => c.name), ...(p.occasions || [])]
+        [p.name, p.category, p.gender, p.gender === 'women' ? 'woman' : 'man', ...(p.colours || []).map((c) => c.name), ...(p.occasions || [])]
           .join(' ')
           .toLowerCase()
           .includes(term),

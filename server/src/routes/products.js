@@ -19,7 +19,7 @@ router.get(
   asyncHandler(async (req, res) => {
     const { gender, q, sort, minPrice, maxPrice, limit } = req.query;
     const filter = { published: true };
-    if (gender) filter.gender = gender;
+    if (gender) filter.gender = gender === 'woman' ? 'women' : gender === 'man' ? 'men' : gender;
     if (list(req.query.category).length) filter.category = { $in: list(req.query.category) };
     if (list(req.query.collection).length) filter.collections = { $in: list(req.query.collection) };
     if (list(req.query.occasion).length) filter.occasions = { $in: list(req.query.occasion) };
@@ -33,8 +33,12 @@ router.get(
       if (maxPrice) filter.price.$lte = Number(maxPrice);
     }
     if (q) {
-      const rx = new RegExp(String(q).replace(/[.*+?^${}()|[\]\\]/g, '\\$&').slice(0, 60), 'i');
-      filter.$or = [{ name: rx }, { category: rx }, { description: rx }, { 'colours.name': rx }, { fabric: rx }];
+      const qTrim = String(q).trim();
+      const rx = new RegExp(qTrim.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').slice(0, 60), 'i');
+      const orConditions = [{ name: rx }, { category: rx }, { description: rx }, { 'colours.name': rx }, { fabric: rx }];
+      if (/^wom[ae]n?$/i.test(qTrim)) orConditions.push({ gender: 'women' });
+      else if (/^m[ae]n$/i.test(qTrim)) orConditions.push({ gender: 'men' });
+      filter.$or = orConditions;
     }
     const products = await Product.find(filter)
       .sort(SORTS[sort] || { bestSeller: -1, publishedAt: -1 })

@@ -16,7 +16,8 @@ const FILTER_KEYS = ['gender', 'category', 'occasion', 'price', 'colour', 'size'
 const getList = (params, key) => (params.get(key) ? params.get(key).split(',') : []);
 
 /** One listing page for gender, category, collection, new arrivals, ready-to-wear and search. */
-export default function Listing({ mode, gender: routeGender }) {
+export default function Listing({ mode, gender: routeGenderProp }) {
+  const routeGender = routeGenderProp === 'woman' ? 'women' : routeGenderProp === 'man' ? 'men' : routeGenderProp;
   const { category: routeCategory, slug } = useParams();
   const [params, setParams] = useSearchParams();
   const { products, status, error, reload } = useProducts();
@@ -68,7 +69,16 @@ export default function Listing({ mode, gender: routeGender }) {
     const term = q.trim().toLowerCase();
     if (!term) return [];
     return products.filter((p) =>
-      [p.name, p.category.replace(/-/g, ' '), p.gender, p.description, p.fabric, ...(p.colours || []).map((c) => c.name), ...(p.occasions || [])]
+      [
+        p.name,
+        p.category.replace(/-/g, ' '),
+        p.gender,
+        p.gender === 'women' ? 'woman' : 'man',
+        p.description,
+        p.fabric,
+        ...(p.colours || []).map((c) => c.name),
+        ...(p.occasions || []),
+      ]
         .join(' ')
         .toLowerCase()
         .includes(term),
@@ -123,7 +133,7 @@ export default function Listing({ mode, gender: routeGender }) {
   };
 
   if (mode === 'collection' && !collection) return <NotFound />;
-  if (mode === 'gender' && routeCategory && !categories[routeGender].some((c) => c.slug === routeCategory)) return <NotFound />;
+  if (mode === 'gender' && routeCategory && !categories[routeGender]?.some((c) => c.slug === routeCategory)) return <NotFound />;
 
   const filterPanel = (
     <FilterPanel

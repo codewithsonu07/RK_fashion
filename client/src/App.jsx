@@ -35,8 +35,12 @@ export default function App() {
           <Route path="search" element={<Listing mode="search" />} />
           <Route path="women" element={<Listing mode="gender" gender="women" />} />
           <Route path="women/:category" element={<Listing mode="gender" gender="women" />} />
+          <Route path="woman" element={<Listing mode="gender" gender="women" />} />
+          <Route path="woman/:category" element={<Listing mode="gender" gender="women" />} />
           <Route path="men" element={<Listing mode="gender" gender="men" />} />
           <Route path="men/:category" element={<Listing mode="gender" gender="men" />} />
+          <Route path="man" element={<Listing mode="gender" gender="men" />} />
+          <Route path="man/:category" element={<Listing mode="gender" gender="men" />} />
           <Route path="collections" element={<Collections />} />
           <Route path="collections/:slug" element={<Listing mode="collection" />} />
           <Route path="product/:slug" element={<Product />} />
