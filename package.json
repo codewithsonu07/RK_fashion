@@ -1,0 +1,25 @@
+{
+  "name": "rk-fashions",
+  "version": "1.0.0",
+  "description": "RK FASHIONS — premium Indian designer clothing & bespoke couture e-commerce",
+  "scripts": {
+    "install:all": "npm install && npm install --prefix client && npm install --prefix server",
+    "dev": "concurrently -n api,web -c yellow,cyan \"npm run dev --prefix server\" \"npm run dev --prefix client\"",
+    "build": "npm run build --prefix client",
+    "seed": "npm run seed --prefix server",
+    "start": "npm start --prefix server",
+    "test": "npm test --prefix server",
+    "create-admin": "npm run create-admin --prefix server --"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "concurrently": "^10.0.6"
+  },
+  "private": true,
+  "engines": {
+    "node": ">=20"
+  }
+}

@@ -1,0 +1,38 @@
+RK FASHIONS — FRONTEND ENVIRONMENT VARIABLES
+============================================
+
+File: client/.env   (template: client/.env.example)
+These are read when the site is BUILT (npm run build), so rebuild after changing them.
+
+----------------------------------------------------------------------
+OPTION A — Recommended: backend serves the website (one Render service)
+----------------------------------------------------------------------
+No frontend variables are needed. Leave client/.env empty or don't create it.
+The site calls the API on its own domain (/api/...).
+
+----------------------------------------------------------------------
+OPTION B — Frontend hosted separately (Vercel, Netlify, …)
+----------------------------------------------------------------------
+Add this in the hosting dashboard (Vercel: Project → Settings → Environment Variables):
+
+VITE_API_URL=https://your-backend.onrender.com
+
+  • The address of your deployed backend — no trailing slash, no /api.
+  • Then on the BACKEND set:
+        CLIENT_URL=https://your-frontend.vercel.app
+        COOKIE_SAMESITE=none
+    (see BACKEND_ENV.txt) so sign-in and checkout work across the two domains.
+
+Build settings for Vercel / Netlify:
+  Root directory:   client
+  Build command:    npm run build
+  Output directory: dist
+  (client/vercel.json and client/public/_redirects already handle page refreshes.)
+
+----------------------------------------------------------------------
+Local development
+----------------------------------------------------------------------
+Nothing to set. `npm run dev` proxies /api to http://localhost:5050.
+
+Never put secrets in frontend variables — anything starting with VITE_ is
+visible to every visitor in the browser.

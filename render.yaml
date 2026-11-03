@@ -1,0 +1,52 @@
+# One-click deploy on Render (https://render.com): New → Blueprint → pick this repo.
+# The API serves the built storefront, so the whole site is a single web service.
+services:
+  - type: web
+    name: rk-fashions
+    runtime: node
+    plan: starter
+    # NODE_ENV=production skips devDependencies, so the client (Vite) install opts back in.
+    buildCommand: npm install --prefix server --omit=dev && npm install --prefix client --include=dev && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: "22"
+      - key: MONGODB_URI
+        sync: false # MongoDB Atlas connection string
+      - key: CLIENT_URL
+        sync: false # e.g. https://rkfashions.in
+      - key: JWT_SECRET
+        generateValue: true
+      - key: ADMIN_TOKEN
+        generateValue: true
+      - key: STUDIO_EMAIL
+        sync: false
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        value: "587"
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: MAIL_FROM
+        sync: false
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      - key: RAZORPAY_KEY_ID
+        sync: false
+      - key: RAZORPAY_KEY_SECRET
+        sync: false
+      - key: RAZORPAY_WEBHOOK_SECRET
+        sync: false
+      - key: COD_ENABLED
+        value: "false"
+      - key: SHIPPING_FEE
+        value: "0"
